@@ -28,7 +28,6 @@ app.get("/", (request, response) => {
     })
 })
 
-
 app.post("/cadastrar", (request, response) => {
     const { titulo, artista, genero, ano, duracao } = request.body
 
@@ -41,6 +40,22 @@ app.post("/cadastrar", (request, response) => {
         }
 
         response.status(201).json({ mensagem: "Música cadastrada com sucesso!" })
+    })
+})
+
+
+app.delete("/apagar/:id", (request, response) => {
+    const { id } = request.params
+
+    const comandoDelete = "DELETE FROM musicas_eloisa WHERE id = ?"
+
+    sql.query(comandoDelete, [id], (error) => {
+        if (error) {
+            console.log(error)
+            return
+        }
+
+        response.json({ mensagem: "Música apagada com sucesso!" })
     })
 })
 
