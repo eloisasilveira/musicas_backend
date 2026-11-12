@@ -15,6 +15,7 @@ const sql = mysql2.createPool({
     database: process.env.NOME_BANCO
 })
 
+// Rota GET para listar todas as músicas
 app.get("/", (request, response) => {
     const comandoSelect = "SELECT * FROM musicas_eloisa"
 
@@ -28,6 +29,23 @@ app.get("/", (request, response) => {
     })
 })
 
+// Rota GET para buscar apenas uma música específica pelo ID
+app.get("/musica/:id", (request, response) => {
+    const { id } = request.params
+
+    const comandoSelectMusica = "SELECT * FROM musicas_eloisa WHERE id = ?"
+
+    sql.query(comandoSelectMusica, [id], (error, data) => {
+        if (error) {
+            console.log(error)
+            return
+        }
+
+        response.json(data[0])
+    })
+})
+
+// Rota POST para cadastrar uma nova música
 app.post("/cadastrar", (request, response) => {
     const { titulo, artista, genero, ano, duracao } = request.body
 
