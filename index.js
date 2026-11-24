@@ -12,7 +12,9 @@ const sql = mysql2.createPool({
     host: process.env.HOST_BANCO,
     user: process.env.USUARIO_BANCO,
     password: process.env.SENHA_BANCO,
-    database: process.env.NOME_BANCO
+    database: process.env.NOME_BANCO,
+    connectionLimit: 1,
+    connectTimeout: 10000
 })
 
 app.get("/", (request, response) => {
@@ -21,7 +23,7 @@ app.get("/", (request, response) => {
     sql.query(comandoSelect, (error, data) => { 
         if (error) {
             console.log(error)
-            return
+            return response.status(500).json({ erro: error.message })
         }
 
         response.json(data)
@@ -36,7 +38,7 @@ app.get("/musica/:id", (request, response) => {
     sql.query(comandoSelect, [id], (error, data) => {
         if (error) {
             console.log(error)
-            return
+            return response.status(500).json({ erro: error.message })
         }
 
         response.json(data[0])
@@ -51,7 +53,7 @@ app.post("/cadastrar", (request, response) => {
     sql.query(comandoInsert, [titulo, artista, genero, ano, duracao], (error) => {
         if (error) {
             console.log(error)
-            return
+            return response.status(500).json({ erro: error.message })
         }
 
         response.status(201).json({ mensagem: "Música cadastrada com sucesso!" })
@@ -67,7 +69,7 @@ app.put("/editar/:id", (request, response) => {
     sql.query(comandoUpdate, [titulo, artista, genero, ano, duracao, id], (error) => {
         if (error) {
             console.log(error)
-            return
+            return response.status(500).json({ erro: error.message })
         }
 
         response.json({ mensagem: "Música alterada com sucesso!" })
@@ -82,7 +84,7 @@ app.delete("/apagar/:id", (request, response) => {
     sql.query(comandoDelete, [id], (error) => {
         if (error) {
             console.log(error)
-            return
+            return response.status(500).json({ erro: error.message })
         }
 
         response.json({ mensagem: "Música apagada com sucesso!" })
